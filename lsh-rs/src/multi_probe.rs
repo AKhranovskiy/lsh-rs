@@ -335,7 +335,7 @@ macro_rules! impl_query_directed_probe {
                 // < this point = -1
                 let switchpoint = xi_min.len();
 
-                let distances: Vec<N> = stack!(Axis(0), xi_min, xi_plus).to_vec();
+                let distances: Vec<N> = stack!(Axis(0), xi_min, xi_plus).into_raw_vec();
 
                 // indexes of the least scores to the highest
                 // all below is an argsort
@@ -448,8 +448,8 @@ mod test {
     fn test_l2_xi_distances() {
         let l2 = L2::<f32>::new(4, 4., 3, 1);
         let (xi_min, xi_plus) = l2.distance_to_bound(&[1., 2., 3., 1.], None);
-        assert_eq!(xi_min, arr1(&[2.0210547, 1.9154847, 0.89937115]));
-        assert_eq!(xi_plus, arr1(&[1.9789453, 2.0845153, 3.1006289]));
+        assert_eq!(xi_min, arr1(&[2.8289278, 3.2833927, 0.3829317]));
+        assert_eq!(xi_plus, arr1(&[1.1710722, 0.71660733, 3.6170683]));
     }
 
     #[test]

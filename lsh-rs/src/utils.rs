@@ -42,8 +42,7 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use rand::SeedableRng;
+    use crate::utils::all_eq;
 
     #[test]
     fn test_all_eq() {

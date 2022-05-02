@@ -6,9 +6,9 @@ use crate::prelude::*;
 use fnv::FnvHashSet;
 use rusqlite::{params, Connection};
 use serde::de::DeserializeOwned;
-use std::marker::PhantomData;
 use serde::Serialize;
 use std::cell::Cell;
+use std::marker::PhantomData;
 
 fn vec_to_blob<T>(hash: &[T]) -> &[u8] {
     let data = hash.as_ptr() as *const u8;
@@ -367,7 +367,7 @@ mod test {
             .conn
             .prepare(&format!("SELECT * FROM {}", sql.table_names[0]))
             .expect("query failed");
-        stmt.query([]).expect("query failed");
+        stmt.query([]).expect("query failed").next().unwrap();
     }
 
     #[test]

@@ -4,10 +4,7 @@ use crate::prelude::*;
 use fnv::FnvHashSet;
 use ndarray::aview1;
 use rayon::prelude::*;
-use statrs::{
-    consts::SQRT_2PI,
-    distribution::{Normal, Univariate},
-};
+use statrs::{consts::SQRT_2PI, distribution::ContinuousCDF, distribution::Normal};
 use std::f64::consts::PI;
 use std::time::Instant;
 
