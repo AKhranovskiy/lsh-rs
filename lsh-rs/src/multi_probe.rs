@@ -155,12 +155,14 @@ fn step_wise_probing(hash_len: usize, mut budget: usize, two_shifts: bool) -> Ve
             .take(budget as usize)
             .for_each(|v| {
                 let mut new_perturb = vec![0; hash_len];
-                v.iter().for_each(|(idx, shift)| {
+
+                for (idx, shift) in &v {
                     debug_assert!(*idx < new_perturb.len());
                     let v = unsafe { new_perturb.get_unchecked_mut(*idx) };
                     *v += *shift;
-                });
-                hash_perturbs.push(new_perturb)
+                }
+
+                hash_perturbs.push(new_perturb);
             });
         k += 1;
         budget -= n_combinations;
@@ -201,7 +203,7 @@ where
 
     fn score(&self) -> N {
         let mut score = Zero::zero();
-        for &index in self.selection.iter() {
+        for &index in &self.selection {
             debug_assert!(index < self.z.len());
             let zj = unsafe { *self.z.get_unchecked(index) };
             debug_assert!(zj < self.distances.len());
@@ -213,7 +215,7 @@ where
     // map zj value to (i, delta) as in paper
     fn i_delta(&self) -> Vec<(usize, K)> {
         let mut out = Vec::with_capacity(self.z.len());
-        for &idx in self.selection.iter() {
+        for &idx in &self.selection {
             debug_assert!(idx < self.z.len());
             let zj = unsafe { *self.z.get_unchecked(idx) };
             let delta;
@@ -225,7 +227,7 @@ where
                 delta = K::from_i8(-1).unwrap();
                 index = zj;
             }
-            out.push((index, delta))
+            out.push((index, delta));
         }
         out
     }
@@ -254,7 +256,7 @@ where
         for (i, delta) in self.i_delta() {
             debug_assert!(i < hash.len());
             let ptr = unsafe { hash.get_unchecked_mut(i) };
-            *ptr += delta
+            *ptr += delta;
         }
         hash
     }
@@ -387,7 +389,7 @@ where
                 if let Some(h) = hasher.as_query_directed_probe() {
                     let hashes = h.query_directed_probe(v, self._multi_probe_budget)?;
                     for hash in hashes {
-                        self.process_bucket_union_result(&hash, i, &mut bucket_union)?
+                        self.process_bucket_union_result(&hash, i, &mut bucket_union)?;
                     }
                 }
             }
@@ -397,7 +399,7 @@ where
                     let hashes =
                         h.step_wise_probe(v, self._multi_probe_budget, self.n_projections)?;
                     for hash in hashes {
-                        self.process_bucket_union_result(&hash, i, &mut bucket_union)?
+                        self.process_bucket_union_result(&hash, i, &mut bucket_union)?;
                     }
                 }
             }

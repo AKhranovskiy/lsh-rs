@@ -116,7 +116,7 @@ pub fn optimize_srp_params(
     let p1 = srp_ph(cosine_sim);
     for _k in k {
         let l = estimate_l(delta, p1, *_k);
-        params.push((*_k, l))
+        params.push((*_k, l));
     }
     let result = params
         .par_iter()
@@ -147,7 +147,7 @@ pub fn optimize_l2_params(
     let p1 = l2_ph(r as f64, 1.);
     for _k in k {
         let l = estimate_l(delta, p1, *_k as usize);
-        params.push((r, *_k, l))
+        params.push((r, *_k, l));
     }
     let result = params
         .par_iter()

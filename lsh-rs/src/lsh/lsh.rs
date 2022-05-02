@@ -535,7 +535,7 @@ where
             let hash = proj.hash_vec_query(v);
             let mut ht = self.hash_tables.take().unwrap();
             ht.delete(&hash, v, i).unwrap_or_default();
-            self.hash_tables = Some(ht)
+            self.hash_tables = Some(ht);
         }
         Ok(())
     }

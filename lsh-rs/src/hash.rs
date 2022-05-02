@@ -164,10 +164,10 @@ where
         for x in v.iter() {
             let l2 = l2_norm(x);
             if l2 > max_l2 {
-                max_l2 = l2
+                max_l2 = l2;
             }
         }
-        self.M = max_l2
+        self.M = max_l2;
     }
 
     pub fn tranform_put(&self, x: &[N]) -> Vec<N> {
@@ -179,12 +179,12 @@ where
 
         // shrink norm such that l2 norm < U < 1.
         for x_i in x.iter().cloned() {
-            x_new.push(x_i / self.M * self.U)
+            x_new.push(x_i / self.M * self.U);
         }
 
         let norm_sq = l2_norm(&x_new).powf(N::from_f32(2.).unwrap());
         for i in 1..(self.m + 1) {
-            x_new.push(norm_sq.powf(N::from_usize(i).unwrap()))
+            x_new.push(norm_sq.powf(N::from_usize(i).unwrap()));
         }
         x_new
     }
@@ -195,12 +195,12 @@ where
         // normalize query to have l2 == 1.
         let l2 = l2_norm(x);
         for x_i in x.iter().cloned() {
-            x_new.push(x_i / l2)
+            x_new.push(x_i / l2);
         }
 
         let half = N::from_f32(0.5).unwrap();
         for _ in 0..self.m {
-            x_new.push(half)
+            x_new.push(half);
         }
         x_new
     }

@@ -8,7 +8,6 @@ use crate::{
 };
 use fnv::{FnvHashMap as HashMap, FnvHashSet};
 use serde::{Deserialize, Serialize};
-use std::iter::FromIterator;
 
 /// Indexible vector storage.
 /// indexes will be stored in hashtables. The original vectors can be looked up in this data structure.
@@ -106,7 +105,7 @@ where
         if (hash_table == 0) && (!self.only_index_storage) {
             self.vec_store.push(d.to_vec());
         } else if hash_table == self.n_hash_tables - 1 {
-            self.counter += 1
+            self.counter += 1;
         }
         Ok(idx)
     }
@@ -159,20 +158,19 @@ where
         let mut min_len = 1000000;
         let mut set: FnvHashSet<i32> = FnvHashSet::default();
         // iterator over hash tables 0..L
-        for map in self.hash_tables.iter() {
+        for map in &self.hash_tables {
             // iterator over all hashes
             // zip to truncate at the describe maximum
             for ((k, v), _) in map.iter().zip(0..DESCRIBE_MAX) {
                 let len = v.len();
-                let hash_values: FnvHashSet<i32> =
-                    FnvHashSet::from_iter(k.iter().map(|&k| k.to_i32().unwrap()));
+                let hash_values: FnvHashSet<i32> = k.iter().map(|&k| k.to_i32().unwrap()).collect();
                 set = set.union(&hash_values).copied().collect();
                 lengths.push(len);
                 if len > max_len {
-                    max_len = len
+                    max_len = len;
                 }
                 if len < min_len {
-                    min_len = len
+                    min_len = len;
                 }
             }
         }
@@ -217,7 +215,7 @@ where
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "hash_tables:\nhash, \t buckets")?;
-        for ht in self.hash_tables.iter() {
+        for ht in &self.hash_tables {
             writeln!(f, "{:?}", ht)?;
         }
         Ok(())

@@ -11,12 +11,12 @@ use std::cell::Cell;
 use std::marker::PhantomData;
 
 fn vec_to_blob<T>(hash: &[T]) -> &[u8] {
-    let data = hash.as_ptr() as *const u8;
+    let data = hash.as_ptr().cast::<u8>();
     unsafe { std::slice::from_raw_parts(data, hash.len() * std::mem::size_of::<T>()) }
 }
 
 fn blob_to_vec<T>(blob: &[u8]) -> &[T] {
-    let data = blob.as_ptr() as *const T;
+    let data = blob.as_ptr().cast::<T>();
     unsafe { std::slice::from_raw_parts(data, blob.len() / std::mem::size_of::<T>()) }
 }
 
@@ -142,7 +142,7 @@ fn get_unique_hash_int(n_hash_tables: usize, conn: &Connection) -> Result<FnvHas
             let hash = blob_to_vec(&blob);
             hash.iter().for_each(|&v| {
                 hash_numbers.insert(v);
-            })
+            });
         }
     }
     Ok(hash_numbers)
@@ -258,12 +258,11 @@ where
 
         // Once we've traversed the last table we increment the id counter.
         if hash_table == self.n_hash_tables - 1 {
-            self.counter += 1
+            self.counter += 1;
         };
 
         match r {
-            Ok(_) => Ok(idx),
-            Err(Error::SqlFailure(_)) => Ok(idx), // duplicates
+            Ok(_) | Err(Error::SqlFailure(_)) => Ok(idx),
             Err(e) => Err(Error::Failed(format!("{:?}", e))),
         }
     }

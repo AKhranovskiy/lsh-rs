@@ -5,7 +5,7 @@ use rand_distr::StandardNormal;
 pub fn increase_capacity<T>(size: usize, container: &mut Vec<T>) {
     if container.capacity() < size {
         let diff = size - container.capacity();
-        container.reserve(diff)
+        container.reserve(diff);
     }
 }
 
