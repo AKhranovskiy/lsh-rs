@@ -8,4 +8,4 @@ edition = "2021"
 
 [dependencies]
 reverse-img-search = {path = ".."}
-blas-src = { version = "0.8", defeault-features = false, features = ["openblas"]}
+blas-src = { version = "0.8", default-features = false, features = ["openblas"]}

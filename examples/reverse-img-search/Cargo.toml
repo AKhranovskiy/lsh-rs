@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 lsh-rs = {path = "../../lsh-rs", features=["blas"]}
-blas-src = { version = "0.8", defeault-features = false, features = ["openblas"]}
+blas-src = { version = "0.8", default-features = false, features = ["openblas"]}
 ndarray = {version = "0.15", features=["blas", "rayon"]}
 image = "0.24"
 bincode = "1.2.1"
