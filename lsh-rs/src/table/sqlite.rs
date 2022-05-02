@@ -51,7 +51,7 @@ fn make_table(table_name: &str, connection: &Connection) -> Result<()> {
 
 fn insert_table<K>(
     table_name: &str,
-    hash: &Vec<K>,
+    hash: &[K],
     idx: u32,
     connection: &Connection,
 ) -> Result<usize> {
@@ -150,7 +150,7 @@ fn get_unique_hash_int(n_hash_tables: usize, conn: &Connection) -> Result<FnvHas
 
 fn init_table(conn: &Connection, table_names: &[String]) -> Result<()> {
     for table_name in table_names {
-        make_table(&table_name, &conn)?;
+        make_table(table_name, conn)?;
     }
     Ok(())
 }
@@ -245,7 +245,7 @@ where
     fn new(n_hash_tables: usize, only_index_storage: bool, db_path: &str) -> Result<Box<Self>> {
         let path = std::path::Path::new(db_path);
         let conn = Connection::open(path)?;
-        SqlTable::init_from_conn(n_hash_tables, only_index_storage, conn).map(|tbl| Box::new(tbl))
+        SqlTable::init_from_conn(n_hash_tables, only_index_storage, conn).map(Box::new)
     }
 
     fn put(&mut self, hash: Vec<K>, _d: &[N], hash_table: usize) -> Result<u32> {
@@ -254,7 +254,7 @@ where
 
         // Get the table name to store this id
         let table_name = self.get_table_name_put(hash_table)?;
-        let r = insert_table(&table_name, &hash, idx, &self.conn);
+        let r = insert_table(table_name, &hash, idx, &self.conn);
 
         // Once we've traversed the last table we increment the id counter.
         if hash_table == self.n_hash_tables - 1 {
@@ -291,7 +291,7 @@ WHERE type='table' AND type LIKE '%hash%';"#,
             let i: i64 = row.get_unwrap(0);
             Ok(i.to_string())
         })?;
-        let mut out = String::from(format!("No. of tables: {}\n", row));
+        let mut out = format!("No. of tables: {}\n", row);
 
         out.push_str("Unique hash values:\n");
         let hv = get_unique_hash_int(self.n_hash_tables, &self.conn).unwrap();
@@ -306,7 +306,7 @@ WHERE type='table' AND type LIKE '%hash%';"#,
         // maximum 3 tables will be used in stats
         let i = std::cmp::min(3, self.n_hash_tables);
         for table_name in &tables[..i] {
-            let stats = hash_table_stats(&table_name, DESCRIBE_MAX, &self.conn)?;
+            let stats = hash_table_stats(table_name, DESCRIBE_MAX, &self.conn)?;
             avg.push(stats.0);
             std_dev.push(stats.1);
             min.push(stats.2);

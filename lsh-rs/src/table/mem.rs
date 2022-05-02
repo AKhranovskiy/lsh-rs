@@ -59,7 +59,7 @@ where
         let tbl = &mut self.hash_tables[hash_table];
         let bucket = tbl.get_mut(hash);
         match bucket {
-            None => return Err(Error::NotFound),
+            None => Err(Error::NotFound),
             Some(bucket) => {
                 bucket.remove(&idx);
                 Ok(())
@@ -69,7 +69,7 @@ where
     fn insert_idx(&mut self, idx: u32, hash: Vec<K>, hash_table: usize) {
         debug_assert!(hash_table < self.n_hash_tables);
         let tbl = unsafe { self.hash_tables.get_unchecked_mut(hash_table) };
-        let bucket = tbl.entry(hash).or_insert_with(|| FnvHashSet::default());
+        let bucket = tbl.entry(hash).or_insert_with(FnvHashSet::default);
         bucket.insert(idx);
     }
 }
@@ -120,7 +120,7 @@ where
         };
         // Note: data point remains in VecStore as shrinking the vector would mean we need to
         // re-hash all datapoints.
-        self.remove_idx(idx, &hash, hash_table)
+        self.remove_idx(idx, hash, hash_table)
     }
 
     fn update_by_idx(
@@ -216,9 +216,9 @@ where
     K: Integer,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "hash_tables:\nhash, \t buckets\n")?;
+        writeln!(f, "hash_tables:\nhash, \t buckets")?;
         for ht in self.hash_tables.iter() {
-            write!(f, "{:?}\n", ht)?;
+            writeln!(f, "{:?}", ht)?;
         }
         Ok(())
     }

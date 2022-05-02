@@ -194,7 +194,7 @@
 //! **Cargo.toml:**
 //! ```toml
 //! lsh-rs = {version ="x.x"}, features=["blas"]}
-//! ndarray = {version = "0.13", features=["blas"]}
+//! ndarray = {version = "0.15", features=["blas"]}
 //! # Or any other blas backend.
 //! blas-src = { version = "0.8", default-features = false, features = ["openblas"]}
 //! ```
@@ -212,6 +212,7 @@ extern crate blas_src;
 extern crate ndarray;
 mod hash;
 mod lsh {
+    #[allow(clippy::module_inception)]
     pub mod lsh;
     mod test;
 }

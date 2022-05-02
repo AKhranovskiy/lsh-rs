@@ -332,7 +332,7 @@ where
     /// * `dim` - Dimensions of the data points.
 
     pub fn new(n_projections: usize, n_hash_tables: usize, dim: usize) -> Self {
-        let lsh = LSH {
+        LSH {
             n_hash_tables,
             n_projections,
             hashers: Vec::with_capacity(0),
@@ -344,17 +344,17 @@ where
             _multi_probe_budget: 16,
             _db_path: "./lsh.db3".to_string(),
             phantom: PhantomData,
-        };
-        lsh
+        }
     }
 
     pub(crate) fn validate_vec<A>(&self, v: &[A]) -> Result<()> {
-        if !(v.len() == self.dim) {
-            return Err(Error::Failed(
+        if v.len() != self.dim {
+            Err(Error::Failed(
                 "data point is not valid, are the dimensions correct?".to_string(),
-            ));
-        };
-        Ok(())
+            ))
+        } else {
+            Ok(())
+        }
     }
 
     /// Set seed of LSH
@@ -438,7 +438,7 @@ where
         let mut ht = self.hash_tables.take().unwrap();
         for (i, proj) in self.hashers.iter().enumerate() {
             let hash = proj.hash_vec_put(v);
-            idx = ht.put(hash, &v, i)?;
+            idx = ht.put(hash, v, i)?;
         }
         self.hash_tables.replace(ht);
         Ok(idx)
@@ -492,7 +492,7 @@ where
 
         bucket_union
             .iter()
-            .map(|&idx| Ok(self.hash_tables.as_ref().unwrap().idx_to_datapoint(idx)?))
+            .map(|&idx| self.hash_tables.as_ref().unwrap().idx_to_datapoint(idx))
             .collect()
     }
 
@@ -634,7 +634,7 @@ where
         };
         let mut f = File::create(path)?;
         let blob = bincode::serialize(&ib)?;
-        f.write(&blob)?;
+        f.write_all(&blob)?;
         Ok(())
     }
 }

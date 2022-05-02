@@ -72,18 +72,18 @@ fn lsh_to_result<H: 'static + VecHash<f32, i8> + Send + Sync + Clone>(
         bucket_lengths.push(bucket_ids.len());
 
         let t0 = Instant::now();
-        let q = aview1(&v);
+        let q = aview1(v);
         bucket_ids.par_sort_by_key(|&idx| {
             let p = &vs[idx as usize];
-            let dist = &aview1(&p) - &q;
+            let dist = &aview1(p) - &q;
             let l2 = l2_norm(dist.as_slice().unwrap());
             (l2 * 1e5) as i32
         });
         let duration = t0.elapsed();
         search_time += duration.as_secs_f64();
     }
-    let min = *bucket_lengths.iter().min().unwrap_or(&(0 as usize));
-    let max = *bucket_lengths.iter().max().unwrap_or(&(0 as usize));
+    let min = *bucket_lengths.iter().min().unwrap_or(&0_usize);
+    let max = *bucket_lengths.iter().max().unwrap_or(&0_usize);
     let avg = bucket_lengths.iter().sum::<usize>() as f32 / bucket_lengths.len() as f32;
     let unique_hash_values = lsh.hash_tables.unwrap().get_unique_hash_int();
     Ok(OptRes {

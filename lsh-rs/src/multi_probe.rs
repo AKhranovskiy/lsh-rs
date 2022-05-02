@@ -47,7 +47,7 @@ where
                     .map(
                         |(&original, &shift)| {
                             if shift == 1 {
-                                original * -1
+                                -original
                             } else {
                                 original
                             }
@@ -110,16 +110,11 @@ fn step_wise_perturb(
     n_perturbations: usize,
     two_shifts: bool,
 ) -> impl Iterator<Item = Vec<(usize, i8)>> {
-    let multiply;
-    if two_shifts {
-        multiply = 2
-    } else {
-        multiply = 1
-    }
+    let multiply = if two_shifts { 2 } else { 1 };
 
     let idx = 0..hash_length * multiply;
     let switchpoint = hash_length;
-    let a = idx.combinations(n_perturbations).map(move |comb| {
+    idx.combinations(n_perturbations).map(move |comb| {
         // return of comb are indexes and perturbations (-1 or +1).
         // where idx are the indexes that are perturbed.
         // if n_perturbations is 2 output could be:
@@ -135,8 +130,7 @@ fn step_wise_perturb(
                 }
             })
             .collect_vec()
-    });
-    a
+    })
 }
 
 /// Generates new hashes by step wise shifting one indexes.
@@ -153,12 +147,8 @@ fn step_wise_probing(hash_len: usize, mut budget: usize, two_shifts: bool) -> Ve
     while budget > 0 && k <= n {
         // binomial coefficient
         // times two as we have -1 and +1.
-        let multiply;
-        if two_shifts {
-            multiply = 2
-        } else {
-            multiply = 1
-        }
+        let multiply = if two_shifts { 2 } else { 1 };
+
         let n_combinations = binomial(n, k) as usize * multiply;
 
         step_wise_perturb(n as usize, k as usize, two_shifts)
@@ -215,7 +205,7 @@ where
             debug_assert!(index < self.z.len());
             let zj = unsafe { *self.z.get_unchecked(index) };
             debug_assert!(zj < self.distances.len());
-            unsafe { score += self.distances.get_unchecked(zj).clone() };
+            unsafe { score += *self.distances.get_unchecked(zj) };
         }
         score
     }

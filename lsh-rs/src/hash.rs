@@ -5,8 +5,8 @@ use ndarray::prelude::*;
 use ndarray_rand::rand_distr::{StandardNormal, Uniform};
 use ndarray_rand::RandomExt;
 use num::{traits::NumCast, Float, Zero};
-use std::marker::PhantomData;
 use serde::{Deserialize, Serialize};
+use std::marker::PhantomData;
 use std::ops::Deref;
 
 /// Implement this trait to create your own custom hashers.
@@ -112,9 +112,7 @@ where
         // not DRY. we don't call hash_vec to save function call.
         ((self.a.dot(&aview1(v)) + &self.b) * div_r)
             .mapv(|x| {
-                let hp = NumCast::from(x.floor())
-                    .expect("Hash value doesnt fit in the Hash primitive type");
-                hp
+                NumCast::from(x.floor()).expect("Hash value doesnt fit in the Hash primitive type")
             })
             .to_vec()
     }
